@@ -1,0 +1,16 @@
+{
+    "name": "scientistpun/leasecalculator",
+    "description": "test",
+    "type": "project",
+    "require": {
+        "nesbot/carbon": "2.30.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "scientistpun",
+            "email": "honynero@sina.cn"
+        }
+    ],
+    "minimum-stability": "dev"
+}
