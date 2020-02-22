@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>租赁计算器</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+</head>
+
+<body>
+    <div class="layui-main">
+        <fieldset class="layui-elem-field" style="margin-top: 30px;">
+            <legend><b>租赁计算器</b></legend>
+            <form class="layui-form" style="margin-top: 20px;">
+                <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">租赁时长</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="renttime" id="renttime" placeholder="请选择租赁时长" readonly="true"
+                            autocomplete="off" lay-verify="required" value="2020-02-01 ~ 2020-09-30"
+                            class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">租金</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="rent" placeholder="请填写租金" autocomplete="off"
+                            lay-verify="required|number" value="1000" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">单选框</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="mode" value="1" title="动态账期" lay-filter="mode1">
+                        <input type="radio" name="mode" value="0" title="固定账期" lay-filter="mode0" checked>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">收租提前</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="forward" disabled lay-filter="forward" lay-skin="switch"
+                            lay-text="提前|固定">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">收租日/收租提前日</label>
+                    <div class="layui-input-inline">
+                        <select name="rentday" lay-filter="rentday">
+                            <option value="1">1号</option>
+                            <option value="2">2号</option>
+                            <option value="3">3号</option>
+                            <option value="4">4号</option>
+                            <option value="5">5号</option>
+                            <option value="6">6号</option>
+                            <option value="7">7号</option>
+                            <option value="8">8号</option>
+                            <option value="9">9号</option>
+                            <option value="10">10号</option>
+                            <option value="11">11号</option>
+                            <option value="12">12号</option>
+                            <option value="13">13号</option>
+                            <option value="14">14号</option>
+                            <option value="15">15号</option>
+                            <option value="16">16号</option>
+                            <option value="17">17号</option>
+                            <option value="18">18号</option>
+                            <option value="19">19号</option>
+                            <option value="20">20号</option>
+                            <option value="21">21号</option>
+                            <option value="22">22号</option>
+                            <option value="23">23号</option>
+                            <option value="24">24号</option>
+                            <option value="25">25号</option>
+                            <option value="26">26号</option>
+                            <option value="27">27号</option>
+                            <option value="28">28号</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="submit">提交计算</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+                <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+            </form>
+        </fieldset>
+        <!-- 计算器 END -->
+
+        <table class="layui-table" id="table"> </table>
+    </div>
+</body>
+<script src="./layui/layui.all.js"></script>
+<script>
+    layui.use(['form', 'laydate', 'layer', 'table'], function () {
+        var form = layui.form,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.jquery;
+        //各种基于事件的操作，下面会有进一步介绍
+
+        // 动态
+        form.on('radio(mode1)', (data) => {
+            $('input[name=forward]').removeAttr('disabled');
+            form.render('checkbox');
+        });
+        // 固定
+        form.on('radio(mode0)', (data) => {
+            $('input[name=forward]').attr('disabled', 'disabled');
+            $('input[name=forward]').prop('checked', false);
+            form.render('checkbox');
+        });
+
+        laydate.render({
+            elem: '#renttime',
+            range: '~'
+        });
+
+        form.on('submit(submit)', (data) => {
+            table.render({
+                elem: '#table',
+                size: 'sm',
+                url: 'Example.php',
+                where: {
+                    compute: 1,
+                    renttime: data.field.renttime,
+                    rent: data.field.rent,
+                    mode: data.field.mode,
+                    forward: data.field.forward,
+                    rentday: data.field.rentday
+                },
+                cols: [
+                    [{
+                        field: 'index',
+                        width: 80,
+                        title: '周期'
+                    }, {
+                        field: 'start',
+                        width: 150,
+                        title: '开始时间'
+                    }, {
+                        field: 'end',
+                        width: 150,
+                        title: '结束时间',
+                    }, {
+                        field: 'days',
+                        width: 100,
+                        title: '周期时长',
+                    }, {
+                        field: 'rent',
+                        width: 100,
+                        title: '租金'
+                    }]
+                ]
+            });
+            return false;
+        });
+    });
+</script>
+
+</html>
